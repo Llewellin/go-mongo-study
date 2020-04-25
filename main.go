@@ -46,53 +46,77 @@ func pay(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println("???")
 	// session.StartTransaction
 	// entry := currency{}
-	var findResult *mongo.SingleResult
+	// var findResult *mongo.SingleResult
 	var err error
-	var entry currency
+	// var entry currency
 	// fmt.Println("globalDB = ", globalDB)
 
 	//step 3: subtract current balance and update back to database
 	// err = globalDB.C("bank").UpdateId(entry.ID, &entry)
-	var result *mongo.UpdateResult
+	// var result *mongo.UpdateResult
 	// var result2 mongo.UpdateResult
 
 	// fmt.Println("result = ", result)
 	// fmt.Println("result2 = ", result2)
 
-	for result == nil || result.MatchedCount == 0 {
-		// step 1: get current amount
-		findResult = globalDB.Collection("bank").FindOne(ctx, bson.M{"account": account})
+	// for result == nil || result.MatchedCount == 0 {
+	// step 1: get current amount
+	// findResult = globalDB.Collection("bank").FindOne(ctx, bson.M{"account": account})
 
-		err = findResult.Err()
-		if err != nil {
-			// panic("1")
-			fmt.Println("err = ", err)
-			return
-			// panic(err)
-		}
+	// err = findResult.Err()
+	// if err != nil {
+	// 	// panic("1")
+	// 	fmt.Println("err = ", err)
+	// 	return
+	// 	// panic(err)
+	// }
 
-		err = findResult.Decode(&entry)
-		if err != nil {
-			// panic("2")
-			fmt.Println("2")
-			return
-			// panic(err)
-		}
-		wait := Random(1, 100)
-		time.Sleep(time.Duration(wait) * time.Millisecond)
+	// err = findResult.Decode(&entry)
+	// if err != nil {
+	// 	// panic("2")
+	// 	fmt.Println("2")
+	// 	return
+	// 	// panic(err)
+	// }
+	// wait := Random(1, 100)
+	// time.Sleep(time.Duration(wait) * time.Millisecond)
 
-		entry.Amount = entry.Amount + 1.000
-		entry.Version = entry.Version + 1
+	// entry.Amount = entry.Amount + 1.000
+	// entry.Version = entry.Version + 1
 
-		fmt.Println("version = ", entry.Version)
+	// fmt.Println("version = ", entry.Version)
 
-		result, err = globalDB.Collection("bank").UpdateOne(ctx, bson.M{"_id": entry.ID, "version": entry.Version - 1}, bson.M{"$set": bson.M{
-			"amount":  entry.Amount,
-			"version": entry.Version,
-		}})
-		fmt.Println("UpdateOne() result MatchedCount:", result.MatchedCount)
-		// fmt.Println("UpdateOne() result ModifiedCount:", result.ModifiedCount)
+	after := options.Before
+	opt := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
 	}
+	doc := currency{}
+	// var singleResult *mongo.SingleResult
+	globalDB.Collection("bank").FindOneAndUpdate(ctx, bson.M{"account": account}, bson.M{"$set": bson.M{
+		"amount":  doc.Amount + 1,
+		"version": doc.Version + 1,
+	}}, &opt).Decode(&doc)
+
+	// decodeErr := singleResult.Decode(&doc)
+	// if decodeErr != nil {
+	// 	return
+	// }
+	// doc2 := bson.M{}
+	// decodeErr2 := opt.ReturnDocument.Decode(&doc)
+	// if decodeErr2 != nil {
+	// 	return
+	// }
+	fmt.Println("doc = ", doc)
+	// fmt.Println("opt.ReturnDocument = ", *(opt.ReturnDocument))
+	// fmt.Println("singleResult = ", singleResult)
+
+	// result, err = globalDB.Collection("bank").UpdateOne(ctx, bson.M{"_id": entry.ID, "version": entry.Version - 1}, bson.M{"$set": bson.M{
+	// 	"amount":  entry.Amount,
+	// 	"version": entry.Version,
+	// }})
+	// fmt.Println("UpdateOne() result MatchedCount:", result.MatchedCount)
+	// fmt.Println("UpdateOne() result ModifiedCount:", result.ModifiedCount)
+	// }
 
 	// }
 
@@ -110,7 +134,7 @@ func pay(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("%+v\n", entry)
+	// fmt.Printf("%+v\n", entry)
 
 	// haha := globalDB.Collection("bank").FindOneAndUpdate(ctx, bson.M{"account": account}, bson.M{"$set": bson.M{
 	// 	"amount": entry.Amount + 1,
