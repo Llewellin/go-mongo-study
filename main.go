@@ -132,8 +132,12 @@ func main() {
 		port = "8000"
 	}
 	// Base context.
-	ctx = context.Background()
-	clientOpts := options.Client().ApplyURI("mongodb://@localhost:27017/")
+	ctx, _ := context.WithTimeout(context.Background(), 100*time.Second)
+	// clientOpts := options.Client().ApplyURI("mongodb://@localhost:8017/")
+	// clientOpts := options.Client().ApplyURI("mongodb://127.0.0.1:27018/")
+	// clientOpts := options.Client().ApplyURI("mongodb://127.0.0.1:27018,127.0.0.1:27019,127.0.0.1:27020/")
+	// clientOpts := options.Client().ApplyURI("mongodb://172.17.0.2:27018,172.17.0.3:27019,172.17.0.4:27020/?replicaSet=mongoreplset")
+	clientOpts := options.Client().ApplyURI("mongodb://mongo1:27018,mongo2:27019,mongo3:27020/?replicaSet=rs0")
 	client, err = mongo.Connect(ctx, clientOpts)
 	if err != nil {
 		fmt.Println(err)
@@ -145,16 +149,21 @@ func main() {
 	// session, _ = mgo.Dial("localhost:27017")
 	// globalDB = session.DB("queue")
 	// globalDB.C("bank").DropCollection()
-
-	coll.DeleteMany(ctx, bson.M{})
-
 	fmt.Println("globalDB = ", globalDB)
+
+	deleteResult, err := coll.DeleteMany(ctx, bson.M{})
+	fmt.Println("deleteResult = ", deleteResult)
+	if err != nil {
+		fmt.Println("err delete = ", err)
+
+	}
 
 	var result *mongo.InsertOneResult
 	user := currency{Account: account, Amount: 1000.00, Code: "USD", Version: 0}
 	result, err = coll.InsertOne(ctx, user)
 
 	if err != nil {
+		fmt.Println("err = ", err)
 		panic("insert error")
 	}
 
