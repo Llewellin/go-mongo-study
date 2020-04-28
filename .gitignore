@@ -1,1 +1,3 @@
 mongo
+.vagrant/machines/
+ubuntu-bionic-18.04*
