@@ -28,7 +28,7 @@ var session mongo.Session
 var dbName = "user"
 var collectionExamples = "account"
 
-var uri = "mongodb://localhost:27017"
+var uri = "mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0"
 
 // var session *mgo.Session
 
@@ -279,7 +279,8 @@ func main() {
 	}
 	// Base context.
 	ctx, _ := context.WithTimeout(context.Background(), 100*time.Second)
-	clientOpts := options.Client().ApplyURI(uri)
+	clientOpts := options.Client().ApplyURI(uri).SetMaxPoolSize(5)
+	// options.Client().SetMaxPoolSize(5)
 	client, err = mongo.Connect(ctx, clientOpts)
 	if err != nil {
 		fmt.Println(err)
@@ -318,7 +319,13 @@ func main() {
 	// ChangeStreamDatabase()
 	// ChangeStreamCollection()
 	// ChangeStreamCollectionWithPipeline()
-	GridFS()
+	// GridFS()
+	// AggregateArray()
+	// AggregateConcatArrays()
+	// TestAggregateGroup()
+	// TestAggregateLookup()
+	// TestAggregateMatch()
+	TestAggregateGraphLookup()
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
 	}
