@@ -28,6 +28,8 @@ var session mongo.Session
 var dbName = "user"
 var collectionExamples = "account"
 
+var uri = "mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0"
+
 // var session *mgo.Session
 
 type currency struct {
@@ -265,6 +267,10 @@ func pay(w http.ResponseWriter, r *http.Request) {
 	TestTransactionCommit()
 }
 
+func GetMongoClient() *mongo.Client {
+	return client
+}
+
 func main() {
 	var err error
 	port := os.Getenv("PORT")
@@ -273,7 +279,7 @@ func main() {
 	}
 	// Base context.
 	ctx, _ := context.WithTimeout(context.Background(), 100*time.Second)
-	clientOpts := options.Client().ApplyURI("mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0")
+	clientOpts := options.Client().ApplyURI(uri)
 	client, err = mongo.Connect(ctx, clientOpts)
 	if err != nil {
 		fmt.Println(err)
@@ -308,6 +314,10 @@ func main() {
 	log.Println("Listen server on " + port + " port")
 	http.HandleFunc("/pay", pay)
 	http.HandleFunc("/abort", abort)
+	// ChangeStreamClient()
+	// ChangeStreamDatabase()
+	// ChangeStreamCollection()
+	ChangeStreamCollectionWithPipeline()
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
 	}
