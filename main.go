@@ -28,7 +28,7 @@ var session mongo.Session
 var dbName = "user"
 var collectionExamples = "account"
 
-var uri = "mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0"
+var uri = "mongodb://localhost:27017"
 
 // var session *mgo.Session
 
@@ -317,7 +317,8 @@ func main() {
 	// ChangeStreamClient()
 	// ChangeStreamDatabase()
 	// ChangeStreamCollection()
-	ChangeStreamCollectionWithPipeline()
+	// ChangeStreamCollectionWithPipeline()
+	GridFS()
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
 	}
