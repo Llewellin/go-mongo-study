@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"testing"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -116,10 +117,10 @@ func ChangeStreamCollection() {
 	stream.SetCollection(collection)
 	stream.SetDatabase(cs.Database)
 	stream.SetPipeline(pipeline)
-	// if testing.Short() {
-	// 	// t.Skip("test changes stream")
-	// 	stream.Watch(client, silent)
-	// }
+	if testing.Short() {
+		// t.Skip("test changes stream")
+		stream.Watch(client, silent)
+	}
 	stream.Watch(client, silent)
 }
 

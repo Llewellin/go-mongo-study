@@ -325,7 +325,8 @@ func main() {
 	// TestAggregateGroup()
 	// TestAggregateLookup()
 	// TestAggregateMatch()
-	TestAggregateGraphLookup()
+	// TestAggregateGraphLookup()
+	TestFindOne()
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
 	}
